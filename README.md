@@ -13,6 +13,7 @@ A sample travel packages website built with **Blazor Server** and **.NET 9.0**, 
   - [Configuration](#configuration)
   - [Running the Application](#running-the-application)
   - [Testing](#testing)
+  - [CI/CD](#cicd)
   - [License](#license)
 
 ---
@@ -59,6 +60,9 @@ dotnet test
 ```
 
 This will execute all tests in the solution and provide a summary of the results.
+
+## CI/CD
+We have also includes a ready-to-use GitHub Actions workflow for continuous integration. On every push or pull request to the master branch, the pipeline automatically restores dependencies, compiles the application, and runs the test suite using the latest .NET 9.0 preview. This can also easily be extended to add deployment, for any further details you can find the workflow file at .github/workflows/dotnet.yml.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
