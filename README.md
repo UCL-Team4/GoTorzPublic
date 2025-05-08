@@ -14,6 +14,7 @@ A sample travel packages website built with **Blazor Server** and **.NET 9.0**, 
   - [Running the Application](#running-the-application)
   - [Testing](#testing)
   - [CI/CD](#cicd)
+  - [Docker Setup](#docker-setup)
   - [License](#license)
 
 ---
@@ -63,6 +64,21 @@ This will execute all tests in the solution and provide a summary of the results
 
 ## CI/CD
 We have also includes a ready-to-use GitHub Actions workflow for continuous integration. On every push or pull request to the master branch, the pipeline automatically restores dependencies, compiles the application, and runs the test suite using the latest .NET 9.0 preview. This can also easily be extended to add deployment, for any further details you can find the workflow file at .github/workflows/dotnet.yml.
+
+## Docker Setup
+This project includes a production-ready Dockerfile that lets you containerize and easily deploy the application.
+
+1. **Build the Docker image**:
+   ```bash
+   docker build -t gotorz-app .
+   ```
+2. **Run the Docker container**:
+   ```bash
+   docker run -d -p 8080:80 --name gotorz gotorz-app
+   ```
+3. **Access the application** at `http://localhost:8080`.
+
+and that's it! You now have a fully functional travel packages website running in a Docker container.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
