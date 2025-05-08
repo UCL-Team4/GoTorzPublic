@@ -21,10 +21,9 @@ A sample travel packages website built with **Blazor Server** and **.NET 9.0**, 
 - **Blazor Server**: Responsive and interactive UI with real-time data updates.
 - **.NET 9.0**: Leverages the latest framework for performance and security enhancements.
 - **Travel Packages**: Browse, search, and filter a variety of travel packages with detailed descriptions and pricing.
-- **Responsive Design**: Mobile-first layout for optimal experience across devices.
 - **Entity Framework Core**: Code-first ORM for robust data access and migrations.
 - **Dependency Injection**: Built-in DI for clean architecture and easier testing.
-- **Unit Testing**: xUnit tests to validate business logic and data operations.
+- **Unit Testing**: Unit tests to validate business logic and data operations.
 
 ## Prerequisites
 - [.NET 9.0 SDK](https://dotnet.microsoft.com/download)
