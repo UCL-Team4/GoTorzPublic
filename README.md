@@ -34,7 +34,7 @@ A sample travel packages website built with **Blazor Server** and **.NET 9.0**, 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/UCL-Team4/GoTorzPublic
-   cd GoTorz
+   cd GoTorzPublic
    ```
 2. **Open the solution** in your IDE of choice.
 
