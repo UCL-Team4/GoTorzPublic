@@ -1,0 +1,44 @@
+﻿<div class="d-flex justify-content-center align-items-center">
+	<img src="@currentImagePath" alt="@currentImageAlt" style="width: 80vw; height: auto;" />
+</div>
+
+@code {
+	private string currentImagePath = "";
+	private string currentImageAlt = "";
+	private int currentPosition;
+
+	private string[] imagePaths =
+	{
+		"https://images.pexels.com/photos/2353333/pexels-photo-2353333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+		"https://images.pexels.com/photos/210536/pexels-photo-210536.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+		"https://images.pexels.com/photos/2676642/pexels-photo-2676642.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+	};
+
+	private string[] imageAlts =
+	{
+		"Mallorca",
+		"Croatia",
+		"Italy"
+	};
+
+	protected override async Task OnInitializedAsync()
+	{
+		currentImagePath = imagePaths[0];
+		currentImageAlt = imageAlts[0];
+		Walkthrough();
+	}
+
+	//This method cyckles through the different images
+	public async Task Walkthrough()
+	{
+		while (true)
+		{
+			await Task.Delay(3000);
+			currentPosition++;
+			currentPosition = Math.Abs(currentPosition % imagePaths.Length);
+			currentImagePath = imagePaths[currentPosition];
+			currentImageAlt = imageAlts[currentPosition];
+			await InvokeAsync(() => this.StateHasChanged());
+		}
+	}
+}

@@ -1,0 +1,45 @@
+﻿@using GoTorz.Models.API
+@inject NavigationManager NavigationManager
+
+<div class="card mb-3" style="max-width: 540px;">
+	<div class="row g-0">
+		<div class="col-md-4">
+			<img src="@placeholderImage" class="img-fluid rounded-start" alt="Hotel Image" />
+		</div>
+		<div class="col-md-8">
+			<div class="card-body">
+				<h5 class="card-title">Hotel @PackageItem.Hotel.Name, City: @PackageItem.Hotel.City</h5>
+				<p class="card-text">
+					@PackageItem.Hotel.Address
+				</p>
+				<p class="card-text">
+					<strong>Flight:</strong> @PackageItem.Flight.DepartureAirport to @PackageItem.Flight.ArrivalAirport
+				</p>
+				<div class="d-flex justify-content-between align-items-center">
+					<div class="text-muted">
+						<span class="fw-bold">@PackageItem.Hotel.StarRating</span> (324 reviews)
+					</div>
+					<div class="fw-bold text-end" style="font-size: 1.25rem;">
+						$@PackageItem.GetPrice()
+					</div>
+				</div>
+
+				@* This button needs both testing and styling *@
+				<button @onclick="ChoosePackage">Choose this package</button>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	private string placeholderImage = "https://images.pexels.com/photos/2353333/pexels-photo-2353333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+
+	[CascadingParameter]
+	public Package PackageItem { get; set; }
+
+	private void ChoosePackage()
+	{
+		NavigationManager.NavigateTo("/booking?package=" + PackageItem.PackageId);
+	}
+}

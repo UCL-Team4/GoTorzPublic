@@ -1,0 +1,125 @@
+﻿@page "/Account/Profile"
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize]
+
+<PageTitle>Profile</PageTitle>
+
+<GoTorz.View.Layout.Header />
+
+<AuthorizeView Context="authState">
+    <div class="container py-5">
+        <h1 class="fw-semibold mb-3">My Gotorz</h1>
+        <p class="lead mb-5">
+            Hello <strong>@authState.User.Identity?.Name</strong>, welcome to Gotorz!<br />
+            Here you can change your profile, view your purchase history and much more!
+        </p>
+
+        <div class="row gy-4">
+            <div class="col-lg-4">
+                <div class="card shadow-sm bg-dark-subtle border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">User Information</h5>
+
+
+                        <NavLink class="btn btn-link ps-0 mb-4" href="Account/Manage/ChangePassword">Change Password</NavLink>
+
+                        <h6 class="text-uppercase text-muted small mb-3">Newsletter</h6>
+
+                        <div class="form-check mb-2">
+                            <InputCheckbox @bind-Value="Model.ReceivePersonal"
+                                            class="form-check-input"
+                                            id="personalNews" />
+                            <label class="form-check-label" for="personalNews">Personal</label>
+                        </div>
+                        <div class="form-check mb-4">
+                            <InputCheckbox @bind-Value="Model.ReceiveBusiness"
+                                            class="form-check-input"
+                                            id="businessNews" />
+                            <label class="form-check-label" for="businessNews">Business</label>
+                        </div>
+
+                        <button class="btn btn-primary w-100"
+                                @onclick="SaveUserInfo">
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card shadow-sm h-100 bg-dark-subtle border-0">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Personal Details</h5>
+
+                        <EditForm Model="Model" OnValidSubmit="SavePersonalDetails">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="row g-3">
+
+                                <div class="col-12">
+                                    <label class="form-label">Customer Number</label>
+                                    <InputText @bind-Value="Model.CustomerNumber" class="form-control" disabled />
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Name</label>
+                                    <InputText @bind-Value="Model.Name" class="form-control" />
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Address</label>
+                                    <InputText @bind-Value="Model.Address" class="form-control" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Postal Code</label>
+                                    <InputText @bind-Value="Model.PostalCode" class="form-control" />
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label class="form-label">City</label>
+                                    <InputText @bind-Value="Model.City" class="form-control" />
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mt-4">Save Details</button>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</AuthorizeView>
+
+<GoTorz.View.Layout.Footer />
+
+@code {
+    private ProfileModel Model = new ProfileModel();
+    Task SaveUserInfo() => Task.CompletedTask;
+    Task SavePersonalDetails() => Task.CompletedTask;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        Model.CustomerNumber = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        Model.Name = authState.User.Identity?.Name;
+    }
+
+    // This is a very temp solution and will be removed upon merge
+    class ProfileModel
+    {
+        public string CustomerNumber { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string PostalCode { get; set; }
+        public string City { get; set; }
+        public bool ReceivePersonal { get; set; }
+        public bool ReceiveBusiness { get; set; }
+    }
+}

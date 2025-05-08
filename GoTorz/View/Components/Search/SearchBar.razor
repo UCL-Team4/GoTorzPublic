@@ -1,0 +1,100 @@
+﻿@inject NavigationManager NavigationManager
+
+<form class="search-bar d-flex flex-wrap align-items-end">
+    <div class="form-group me-3 mb-2">
+        <label for="departureInput">Departure</label><br />
+
+        <textarea id="departureInput"
+                  class="form-control"
+                  @bind="Departure"
+                  @bind:event="oninput"
+                  placeholder="Where are you coming from?"
+                  rows="1"
+                  @onkeydown="HandleKeyDown">
+        </textarea>
+    </div>
+    <div class="form-group me-3 mb-2">
+        <label for="locationInput">Destination</label><br />
+
+        <textarea id="locationInput"
+                  class="form-control"
+                  @bind="Location"
+                  @bind:event="oninput"
+                  placeholder="Where are you going?"
+                  rows="1"
+                  @onkeydown="HandleKeyDown">
+        </textarea>
+    </div>
+    <div class="form-group me-3 mb-2">
+        <label for="checkInInput">Check In</label><br />
+        <InputDate id="checkInInput"
+                   class="form-control"
+                   @bind-Value="CheckIn"
+                   placeholder="Pick date" />
+    </div>
+    <div class="form-group me-3 mb-2">
+        <label for="checkOutInput">Check Out</label><br />
+        <InputDate id="checkOutInput"
+                   class="form-control"
+                   @bind-Value="CheckOut"
+                   placeholder="Pick date" />
+    </div>
+    <div class="form-group me-3 mb-2">
+        <label for="guestsInput">Guests</label><br />
+        <InputNumber id="guestsInput"
+                     class="form-control"
+                     @bind-Value="NumberOfGuests"
+                     placeholder="Add guests" />
+    </div>
+
+    <button type="button"
+            class="btn btn-primary mb-2"
+            @onclick="Search"
+            disabled="@IsSearchDisabled">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        Search
+    </button>
+</form>
+
+@code {
+    [Parameter] public string? Departure { get; set; }
+    [Parameter] public string? Location { get; set; }
+    [Parameter] public DateTime? CheckIn { get; set; }
+    [Parameter] public DateTime? CheckOut { get; set; }
+    [Parameter] public int NumberOfGuests { get; set; } = 1;
+
+    private bool IsSearchDisabled =>
+           string.IsNullOrWhiteSpace(Departure) &&
+           string.IsNullOrWhiteSpace(Location) &&
+           !CheckIn.HasValue &&
+           !CheckOut.HasValue;
+
+    private void Search()
+    {
+        var qp = new List<string> { $"guests={NumberOfGuests}" };
+
+        if (CheckIn.HasValue) 
+            qp.Add($"checkIn={CheckIn:yyyy-MM-dd}");
+
+        if (CheckOut.HasValue) 
+            qp.Add($"checkOut={CheckOut:yyyy-MM-dd}");
+
+        if (!string.IsNullOrWhiteSpace(Location))
+            qp.Add($"location={Uri.EscapeDataString(Location?.TrimEnd('\r', '\n'))}");
+
+        if (!string.IsNullOrWhiteSpace(Departure))
+            qp.Add($"departure={Uri.EscapeDataString(Departure?.TrimEnd('\r', '\n'))}");
+
+        if (qp.Count < 2) return;
+
+        NavigationManager.NavigateTo("/search?" + string.Join("&", qp));
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            Search();
+        }
+    }
+}

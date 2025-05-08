@@ -1,0 +1,95 @@
+﻿@page "/search"
+
+@using GoTorz.View.Components.Search
+@using GoTorz.View.Layout
+@using GoTorz.Models.API
+
+@inject GoTorz.Services.PackageService PackageService
+@inject ILogger<Search> Logger
+@inject HttpClient client
+
+@rendermode InteractiveServer
+
+<PageTitle>Search</PageTitle>
+
+<Header />
+
+<div class="d-flex justify-content-center my-5">
+    <SearchBar Departure="@Departure"
+               Location="@Location"
+               CheckIn="@CheckIn"
+               CheckOut="@CheckOut"
+               NumberOfGuests="@Guests" />
+</div>
+
+<div class="d-flex justify-content-center my-5">
+    @if (_packages != null)
+    {
+        if (_packages.Count > 0)
+        {
+            for (int i = 0; i < _packages.Count; i++)
+            {
+                <CascadingValue Value="_packages[i]">
+                    <PackageCard />
+                </CascadingValue>
+            }
+        }
+        else
+        {
+            <p>No results found</p>
+        }
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+</div>
+
+<Footer />
+
+@code {
+    private List<Package> _packages { get; set; }
+
+    [Parameter, SupplyParameterFromQuery(Name = "departure")]
+    public string? Departure { get; set; }
+
+    [Parameter, SupplyParameterFromQuery(Name = "location")]
+    public string? Location { get; set; }
+
+    [Parameter, SupplyParameterFromQuery(Name = "checkIn")]
+    public DateTime? CheckIn { get; set; }
+
+    [Parameter, SupplyParameterFromQuery(Name = "checkOut")]
+    public DateTime? CheckOut { get; set; }
+
+    [Parameter, SupplyParameterFromQuery(Name = "guests")]
+    public int Guests { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var searchPackagesRequest = new SearchPackagesRequest
+                {
+                    Departure = Departure,
+                    Location = Location,
+                    CheckIn = CheckIn,
+                    CheckOut = CheckOut,
+                    Guests = Guests
+                };
+
+            Logger.LogInformation("Search Request: Departure = {Departure}, Location = {Location}, CheckIn = {CheckIn}, CheckOut = {CheckOut}, Guests = {Guests}",
+                Departure, Location, CheckIn, CheckOut, Guests);
+
+            var response = await client.PostAsJsonAsync("/api/package/search", searchPackagesRequest);
+            response.EnsureSuccessStatusCode();
+
+            var packageArray = await response.Content.ReadFromJsonAsync<Package[]>();
+            _packages = packageArray?.ToList() ?? new List<Package>();
+
+            Logger.LogInformation("We have {Count} Packages", _packages.Count);
+
+            StateHasChanged();
+        }
+    }
+}

@@ -1,0 +1,135 @@
+﻿@page "/chat"
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+
+@using GoTorz.Models.Chat
+@using GoTorz.View.Layout
+@using Microsoft.AspNetCore.Http.Connections
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Authorization
+
+@inject ILogger<Chat> Logger
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+@attribute [Authorize]
+
+<PageTitle>Chat</PageTitle>
+
+<Header />
+
+<div class="container py-4">
+    <div class="border rounded-3 bg-light p-3 mb-3" style="height: 500px; overflow-y: auto;">
+
+        @if (!_userMessages.Any())
+        {
+            <div class="text-center text-muted mt-5">No messages yet. Start chatting!</div>
+        }
+
+        @* Welcome to Div Hell  *@
+        @foreach (var msg in _userMessages)
+        {
+            bool CurrentUser = msg.UserName == usernameInput;
+
+            <div class="d-flex mb-2 @(CurrentUser ? "justify-content-end" : "justify-content-start")">
+                <div class="card shadow-sm @(CurrentUser ? "bg-primary text-white" : "bg-white")" style="max-width: 70%;">
+                    <div class="card-body py-2 px-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-uppercase @(CurrentUser ? "text-white-50" : "text-muted")">
+                                @(CurrentUser ? "You" : msg.UserName)
+                            </small>
+                            <small class="text-muted">@msg.TimeStamp.ToString("HH:mm")</small>
+                        </div>
+                        <div>@msg.Message</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @* Input Area *@
+    <div class="input-group">
+        <textarea @bind="messageInput"
+            @bind:event="oninput"
+            class="form-control"
+            placeholder="Type a message…"
+            @onkeydown="@(async e =>
+              {
+                  if (e.Key == "Enter")
+                  {
+                      await Send();
+                  }
+              })">
+        </textarea>
+
+        <button class="btn btn-primary" @onclick="Send">
+            <i class="bi bi-send"></i>
+        </button>
+    </div>
+</div>
+
+<Footer />
+
+
+@code {
+    private HubConnection hubConnection;
+    private List<ChatMessage> _userMessages = new();
+    private string userId;
+    private string usernameInput;
+    private string messageInput;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+		// We should probably rewrite this at some point to use authentication server side but whatever since this is vulnerable to XSS
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        usernameInput = authState.User.Identity.Name.ToString();
+        userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", async (user, msg) =>
+        {
+            _userMessages.Add(new ChatMessage
+                {
+                    UserName = user,
+                    Message = msg,
+					TimeStamp = DateTime.Now
+                });
+
+            await InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On<List<ChatMessage>>("LoadHistory", async (messages) =>
+        {
+			_userMessages = messages;
+
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+
+    private async Task Send()
+    {
+        if (!string.IsNullOrEmpty(usernameInput) && !string.IsNullOrEmpty(messageInput))
+        {
+            await hubConnection.SendAsync("SendMessage", userId, usernameInput, messageInput.TrimEnd('\r', '\n'));
+            messageInput = string.Empty;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

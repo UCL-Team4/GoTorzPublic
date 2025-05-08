@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+
+<div class="bg-dark text-light d-flex align-items-center p-3">
+
+    <NavLink class="nav-link" href="/">
+        <img src="https://school.renewedscripts.com/gotorz/logo.png"
+             alt="Gotorz Logo"
+             style="width:120px;height:60px;" />
+    </NavLink>
+
+    <label class="ms-4">Places to stay</label>
+    <label class="ms-4">Experiences</label>
+    <label class="ms-4">Discover</label>
+    <label class="ms-4">Travel Guides</label>
+
+    <div class="ms-auto d-flex align-items-center">
+        <label class="me-3">USD</label>
+
+        <i class="me-3 fa-solid fa-globe"></i>
+        <i class="me-3 fa-solid fa-message"></i>
+        <i class="me-3 fa-solid fa-bell"></i>
+
+        <AuthorizeView>
+            <Authorized>
+                <NavLink class="nav-link" href="/Account/Profile">
+                    <img src="https://school.renewedscripts.com/gotorz/profile-placeholder.png"
+                         class="rounded-circle"
+                         alt="Profile"
+                         style="width:30px;height:30px;" />
+                </NavLink>
+            </Authorized>
+            <NotAuthorized>
+                <NavLink class="nav-link" href="Account/Login">
+                    <label style="cursor: pointer;">Log In</label>
+                </NavLink>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</div>

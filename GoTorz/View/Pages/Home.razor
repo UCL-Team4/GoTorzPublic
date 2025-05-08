@@ -1,0 +1,27 @@
+﻿@page "/"
+@using GoTorz.View.Layout
+@using GoTorz.View.Components.Search
+@using GoTorz.View.Components.Home
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<Header />
+
+<div class="d-flex justify-content-center my-5">
+    <SearchBar />
+</div>
+
+<div class="my-5" style="position: relative; top: -75px; z-index: -1; margin: auto; width: 80vw;">
+    <Carousel />
+</div>
+
+<div class="my-5" style="position: relative; top: -75px; margin: auto; width: 80vw;">
+    <Cities />
+</div>
+
+<div class="my-5" style="position: relative; top: -75px; margin: auto; width: 80vw;">
+    <UniqueDestinations />
+</div>
+
+<Footer />
