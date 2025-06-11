@@ -1,0 +1,17 @@
+﻿@* This component displays the status of the API calls using a parameter *@
+
+<div class="card">
+	<div class="card-body">
+		<div class="card-title">
+			<h3>Status:</h3>
+		</div>		
+		<div class="card-text">
+			<p>@StatusMessage</p>
+		</div>
+	</div>	
+</div>
+
+@code {
+	[Parameter]
+	public string StatusMessage { get; set; } = String.Empty;
+}

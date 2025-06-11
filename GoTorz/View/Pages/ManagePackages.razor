@@ -1,0 +1,22 @@
+﻿@page "/sales/manage-packages"
+@using GoTorz.View.Layout
+@using GoTorz.View.Components.ManagePackages
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin, Sales")]
+@rendermode InteractiveServer
+
+<div class="admin-dashboard d-flex text-white bg-dark" style="min-height: 100vh;">
+    <Sidebar />
+
+    <main class="main-content p-4 w-100 bg-dark text-white">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Manage travel packages</h2>
+            <CreatePackageButton />
+        </div>
+
+        <h5>Pending Inquiries</h5>
+
+        <PackageTable />
+        <Pagination />
+    </main>
+</div>

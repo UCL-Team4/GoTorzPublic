@@ -8,6 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="View\Components\NewFolder1\**" />
+    <Compile Remove="View\Components\NewFolder\**" />
+    <Content Remove="View\Components\NewFolder1\**" />
+    <Content Remove="View\Components\NewFolder\**" />
+    <EmbeddedResource Remove="View\Components\NewFolder1\**" />
+    <EmbeddedResource Remove="View\Components\NewFolder\**" />
+    <None Remove="View\Components\NewFolder1\**" />
+    <None Remove="View\Components\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="View\Components\Sales\PackageTable.razor" />
+    <Content Remove="View\Components\Sidebar.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
@@ -20,9 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,273 @@
+﻿@page "/sales/create-package"
+@attribute [Authorize(Roles = "Admin, Sales")]
+@using GoTorz.Models.Booking
+@using GoTorz.Services
+@using GoTorz.View.Components.ManagePackages
+@using GoTorz.View.Components.Sales
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using System.ComponentModel.DataAnnotations
+@inject IFlightHotelApiService flightHotelApiService
+@inject PackageService packageService
+@inject ILogger<Search> Logger
+@inject ApiConverterService apiConverterService
+@rendermode InteractiveServer
+
+<div class="admin-dashboard d-flex text-white bg-dark" style="min-height: 100vh;">
+	<Sidebar />
+
+	<main class="main-content p-4 w-100 bg-dark text-white">
+		<h3>CreatePackages</h3>
+
+		<div class="flex-md-wrap">
+			<div>
+				<h3>Search APIs</h3>
+
+				@* An EditForm Component is used here for data validation *@
+				<EditForm Model="@_apiSearchResult" OnValidSubmit="@SearchFlightsAndHotels">
+					<DataAnnotationsValidator />
+					<ValidationSummary />
+
+					<div>
+						<label for="departureAirport">DepartureAirport:</label>
+						<InputText id="departureAirport" @bind-Value="_apiSearchResult.DepartureAirport" />
+						<ValidationMessage For="@(() => _apiSearchResult.DepartureAirport)" />
+					</div>
+
+					<div>
+						<label for="destinationAirport">DestinationAirport:</label>
+						<InputText id="destinationAirport" @bind-Value="_apiSearchResult.DestinationAirport" />
+						<ValidationMessage For="@(() => _apiSearchResult.DepartureAirport)" />
+					</div>
+
+					<div>
+						<label for="destiationId">DestinationId:</label>
+						<InputText id="destinationId" @bind-Value="_apiSearchResult.DestinationId" />
+						<ValidationMessage For="@(() => _apiSearchResult.DestinationId)" />
+					</div>
+
+					<div>
+						<label for="departDateFlight">DepartDateFlight:</label>
+						<InputDate id="departDateFlight" @bind-Value="_apiSearchResult.DepartDateFlight" />
+						<ValidationMessage For="@(() => _apiSearchResult.DepartDateFlight)" />
+					</div>
+
+					<div>
+						<label for="arrivalHotel">ArrivalHotel:</label>
+						<InputDate id="arrivalHotel" @bind-Value="_apiSearchResult.ArrivalHotel" />
+						<ValidationMessage For="@(() => _apiSearchResult.ArrivalHotel)" />
+					</div>
+
+					<div>
+						<label for="departureHotel">DepartureHotel:</label>
+						<InputDate id="departureHotel" @bind-Value="_apiSearchResult.DepartureHotel" />
+						<ValidationMessage For="@(() => _apiSearchResult.DepartureHotel)" />
+					</div>
+
+					<button type="submit">Search</button>
+				</EditForm>
+			</div>			
+
+			<div>
+				<CheckStatus StatusMessage="@_statusMessage"></CheckStatus>
+			</div>
+
+			<div class="flex-fill" style="margin-bottom: 20px">
+				@if (Flights != null)
+				{
+					@* This QuickGrid should probably be a component *@
+					<QuickGrid Items="Flights.AsQueryable()" Pagination="pagination">
+						<PropertyColumn Title="ID" Property="@(f => f.FlightId)" Sortable="true" />
+						<PropertyColumn Title="Number" Property="@(f => f.FlightNumber)" Sortable="true" />
+						<PropertyColumn Title="DepartureAirport" Property="@(f => f.DepartureAirport)" Sortable="true" />
+						<PropertyColumn Title="ArrivalAirport" Property="@(f => f.ArrivalAirport)" Sortable="true" />
+						<PropertyColumn Title="ArrivalCity" Property="@(f => f.ArrivalCity)" Sortable="true" />
+						<PropertyColumn Title="DepartureTime" Property="@(f => f.DepartureTime)" Sortable="true" />
+						<PropertyColumn Title="ArrivalTime" Property="@(f => f.ArrivalTime)" Sortable="true" />
+						<PropertyColumn Title="Airline" Property="@(f => f.Airline)" Sortable="true" />
+						<PropertyColumn Title="Price" Property="@(f => f.Price)" Sortable="true" />
+						<TemplateColumn Title="Select" Context="f">
+							<button @onclick="()=>SelectFlightForPackage(f)">Select flight</button>
+						</TemplateColumn>
+					</QuickGrid>
+
+					<Paginator State="pagination"/>
+				}
+				else
+				{
+					<p>Loading flights...</p>
+				}
+
+				@if (Hotels != null)
+				{
+					@* This QuickGrid should probably be a component *@
+					<QuickGrid Items="Hotels.AsQueryable()" Pagination="pagination">
+						<PropertyColumn Title="HotelId" Property="@(h => h.HotelId)" Sortable="true" />
+						<PropertyColumn Title="Name" Property="@(h => h.Name)" Sortable="true" />
+						<PropertyColumn Title="Address" Property="@(h => h.Address)" Sortable="true" />
+						<PropertyColumn Title="City" Property="@(h => h.City)" Sortable="true" />
+						<PropertyColumn Title="Country" Property="@(h => h.Country)" Sortable="true" />
+						<PropertyColumn Title="StarRating" Property="@(h => h.StarRating)" Sortable="true" />
+						<PropertyColumn Title="PricePerNight" Property="@(h => h.PricePerNight)" Sortable="true" />
+						<TemplateColumn Title="Select" Context="h">
+							<button @onclick="()=>SelectHotelForPackage(h)">Select hotel</button>
+						</TemplateColumn>
+					</QuickGrid>
+
+					<Paginator State="pagination" />
+				}
+				else
+				{
+					<p>Loading hotels...</p>
+				}
+			</div>
+
+			@* This should also be a component *@
+
+			<div>
+				<h3>New Package</h3>
+			</div>
+
+			<div class="d-flex" style="margin-bottom: 20px">
+				<div class="flex-fill">
+					<label>Flight</label>
+					<p>@selectedFlight.FlightId</p>
+				</div>
+
+				<div class="flex-fill">
+					<label>Hotel</label>
+					<p>@selectedHotel.Name</p>
+				</div>
+
+				<div class="flex-fill">
+					<label>Nights</label>
+					<p>@nights</p>
+				</div>
+
+				<div class="flex-fill">
+					<label>Commision Percentage</label>
+					<p>@commisionPercentage</p>
+				</div>
+
+				<div class="flex-fill">
+					<button @onclick=CreateNewPackage>Create new package!</button>
+				</div>			
+			</div>	
+		</div>
+	</main>
+</div>
+
+@code {
+	// This class is found at the bottom
+	private ApiSearchResult _apiSearchResult = new();
+	
+	private string _statusMessage = "Ready to call APIs";
+
+	private List<Flight> Flights = [];
+	private List<Hotel> Hotels = [];
+
+	// These are used to create the package
+	private Flight selectedFlight = new();
+	private Hotel selectedHotel = new();
+	private int nights;
+	private int commisionPercentage;
+
+	PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+
+	private async Task SearchFlightsAndHotels()
+	{
+		try
+		{
+			_statusMessage = "Calling APIs - please stand by...";
+
+			var result = await flightHotelApiService.SearchFlightsAndHotelsAsync(_apiSearchResult.DepartureAirport, _apiSearchResult.DestinationAirport, _apiSearchResult.DepartDateFlight.ToString("yyyy-MM-dd"), _apiSearchResult.DestinationId, _apiSearchResult.ArrivalHotel.ToString("yyyy-MM-dd"), _apiSearchResult.DepartureHotel.ToString("yyyy-MM-dd"));
+
+			try
+			{
+				var flightresult = await apiConverterService.ConvertFlightApiToBooking(result.Item1);
+
+				foreach (var flight in flightresult)
+				{
+					Flights.Add(flight);
+				}
+
+				Logger.LogInformation($"Number of Flights: {Flights.Count}");
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError("Converting FlightApi failed: " + ex);
+				_statusMessage = "Converting FlightApi failed! - Please consult an admin.";
+			}
+
+			try
+			{
+				var hotelresult = await apiConverterService.ConvertHotelApiToBooking(result.Item2);
+
+				foreach (var hotel in hotelresult)
+				{
+					Hotels.Add(hotel);
+				}
+
+				Logger.LogInformation($"Number of Hotels: {Hotels.Count}");
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError("Converting HotelApi failed: " + ex);
+				_statusMessage = "Converting HotelApi failed! - Please consult an admin.";
+			}
+		}
+
+		catch (Exception ex)
+		{
+			Logger.LogError("API call failed: " + ex);
+			_statusMessage = "API call failed! Please retry or consult an admin.";
+		}
+		
+		_statusMessage = "Success!";
+	}
+
+	private async Task CreateNewPackage()
+	{
+		Package newPackage = new Package()
+		{
+			Flight = selectedFlight,
+			Hotel = selectedHotel,
+			Nights = nights,
+			CommissionPercentage = commisionPercentage
+		};
+
+		await packageService.CreateNewPackage(newPackage);
+	}
+
+	private void SelectFlightForPackage(Flight flight)
+	{
+		selectedFlight = flight;
+	}
+
+	private void SelectHotelForPackage(Hotel hotel)
+	{
+		selectedHotel = hotel;
+	}
+
+	public class ApiSearchResult
+	{
+		[Required]
+		public string DepartureAirport { get; set; } = "BOM";
+
+		[Required]
+		public string DestinationAirport {get; set; } = "DEL";
+
+		// DestinationId is found using another API and should match the destination country!
+		[Required]
+		public string DestinationId { get; set; } = "-2092174";
+
+		[Required]
+		public DateTime DepartDateFlight {get; set; } = DateTime.Now;
+
+		[Required]
+		public DateTime ArrivalHotel {get; set; } = DateTime.Now;
+
+		[Required]
+		public DateTime DepartureHotel {get; set; } = DateTime.Now;
+	}
+}

@@ -15,7 +15,7 @@ namespace UnitTest
     {
         private ApplicationDbContext _context;
         private UserService _userService;
-        private SignInService _signInService;
+        // private SignInService _signInService;
 
         private HttpClient _client;
 
@@ -44,7 +44,7 @@ namespace UnitTest
             _client = factory.CreateClient();
 
             _context = new ApplicationDbContext(options);        
-            _signInService = new SignInService(_context);
+            // _signInService = new SignInService(_context);
         }
 
 

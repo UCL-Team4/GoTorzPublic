@@ -1,4 +1,4 @@
-﻿using GoTorz.View;
+using GoTorz.View;
 using GoTorz.View.Account;
 using GoTorz.Data;
 using GoTorz.Services;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.ResponseCompression;
 using GoTorz.Hubs;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace GoTorz
 {
@@ -26,7 +27,9 @@ namespace GoTorz
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
             builder.Services.AddScoped<UserService>();
+            builder.Services.AddScoped<ApiConverterService>();
 
+            builder.Services.AddScoped<IFlightHotelApiService, ApiService>();
             builder.Services.AddScoped<MessageService>();
 
             builder.Services.AddControllers();
@@ -59,13 +62,16 @@ namespace GoTorz
             builder.Services.AddScoped(sp =>
                 new HttpClient
                 {
-                    BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? "https://localhost:7162")
+                    BaseAddress = new Uri("https://gotorz.shop")
                 });
 
-
+            // Added .AddRoles here + .AddRolemanager + .AddRoleStore
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddRoleStore<RoleStore<IdentityRole, ApplicationDbContext>>()
                 .AddDefaultTokenProviders();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();

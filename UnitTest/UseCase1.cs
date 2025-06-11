@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GoTorz.Data;
 using GoTorz.Services;
-using GoTorz.Models.API;
+using GoTorz.Models.Booking;
 
 namespace UnitTest
 {

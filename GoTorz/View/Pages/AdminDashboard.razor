@@ -1,0 +1,64 @@
+﻿@page "/admin"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using GoTorz.Data
+@using GoTorz.Models.User
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> roleManager
+@inject ILogger<Search> Logger
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+
+<h3>AdminDashboard</h3>
+
+<p>Welcome admin!</p>
+
+@* <button @onclick="MakeUserAdmin">Make user admin</button>
+
+<button @onclick="MakeUserSales">Make user sales</button> *@
+
+@code {
+	// This page should include the following features: 1) Admin can see and edit user profiles. 2) Admin can give roles to users. 3) Admin can reset passwords.
+
+	// This method was used to make a user admin
+	// private async Task MakeUserAdmin()
+	// {
+	// 	ApplicationUser? adminUser = await userManager.FindByNameAsync("admin@gotorz.shop");
+	// 	IdentityRole? adminRole = await roleManager.FindByNameAsync("Admin");
+
+	// 	try
+	// 	{
+	// 		if (adminUser != null && adminRole != null)
+	// 		{
+	// 			Logger.LogInformation($"User is: {adminUser.UserName}");
+	// 			Logger.LogInformation($"The role {adminRole.Name} exists!");
+
+	// 			await userManager.AddToRoleAsync(adminUser, "Admin");
+
+	// 			Logger.LogInformation("Succes!");
+	// 		}
+	// 		else
+	// 			Logger.LogError("Failed to assign admin role!");
+	// 	}
+	// 	catch (Exception ex)
+	// 	{
+	// 		Logger.LogError($"Failed: {ex}");
+	// 	}
+
+	// }
+
+	// // This method was used to make a user sales
+	// private async Task MakeUserSales()
+	// {
+	// 	ApplicationUser? salesUser = await userManager.FindByNameAsync("sales@gotorz.shop");
+
+	// 	if (salesUser != null)
+	// 	{
+	// 		Logger.LogInformation($"User is: {salesUser.UserName}");
+	// 		await userManager.AddToRoleAsync(salesUser, "Sales");
+	// 		Logger.LogInformation("Succes!");
+	// 	}		
+	// 	else
+	// 		Logger.LogError("Failed to assign sales role!");
+	// }
+}

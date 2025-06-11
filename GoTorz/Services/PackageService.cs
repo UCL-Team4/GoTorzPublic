@@ -1,5 +1,6 @@
-﻿using GoTorz.Data;
-using GoTorz.Models.API;
+using GoTorz.Data;
+using GoTorz.Models.Booking;
+using GoTorz.Models.Chat;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoTorz.Services;
@@ -91,5 +92,11 @@ public class PackageService
 
 
         return packages;
+    }
+
+    public async Task CreateNewPackage(Package package)
+    {
+        _context.Packages.Add(package);
+        await _context.SaveChangesAsync();
     }
 }

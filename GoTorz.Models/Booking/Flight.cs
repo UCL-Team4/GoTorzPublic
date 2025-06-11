@@ -1,4 +1,4 @@
-﻿namespace GoTorz.Models.API;
+﻿namespace GoTorz.Models.Booking;
 
 public class Flight
 {
@@ -9,6 +9,7 @@ public class Flight
     public string DepartureAirport { get; set; }
 
     public string ArrivalAirport { get; set; }
+
     public string ArrivalCity { get; set; }
 
     public DateTime DepartureTime { get; set; }

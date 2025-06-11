@@ -1,4 +1,4 @@
-﻿namespace GoTorz.Models.API;
+﻿namespace GoTorz.Models.Booking;
 
 public class Package
 {
@@ -10,6 +10,8 @@ public class Package
     public int CommissionPercentage { get; set; }
     public int Nights { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+    public DateTime? DeleteDate { get; set; }
 
     // Get the flight price + total hotel price + gotorz comission
     public decimal GetPrice() => (Flight.Price + (Hotel.PricePerNight * Nights)) * (1 + (CommissionPercentage / 100));

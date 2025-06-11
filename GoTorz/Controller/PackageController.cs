@@ -1,6 +1,6 @@
 ﻿using GoTorz.Services;
 using Microsoft.AspNetCore.Mvc;
-using GoTorz.Models.API;
+using GoTorz.Models.Booking;
 
 namespace GoTorz.Controller
 {

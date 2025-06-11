@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using GoTorz.Models.User;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 
 namespace GoTorz.Services;
 
@@ -9,7 +10,6 @@ public class UserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
-
     private IEnumerable<IdentityError> _identityErrors;
 
     // Minimal constructor: no longer need the DbContext or IUserStore
@@ -19,7 +19,7 @@ public class UserService
     {
         _userManager = userManager;
         _signInManager = signInManager;
-    }
+    }  
 
     // You can simplify CreateUser() to just "new ApplicationUser()" if you'd like
     private ApplicationUser CreateUser()
@@ -68,5 +68,10 @@ public class UserService
     public async Task<ApplicationUser> FindByNameAsync(string username)
     {
         return await _userManager.FindByNameAsync(username);
+    }
+    
+    public async Task AddRoleToUser(ApplicationUser user, string role)
+    {
+        await _userManager.AddToRoleAsync(user, role);
     }
 }

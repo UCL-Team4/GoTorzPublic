@@ -1,0 +1,53 @@
+﻿@using GoTorz.Models.Booking
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject HttpClient client
+
+@if(_packages != null)
+{
+    <QuickGrid Items="_packages.AsQueryable()">
+        <PropertyColumn Property="@(p => p.PackageId)" Sortable="true" />
+        <PropertyColumn Property="@(p => p.CreatedDate)" Format="dd-MM-yyyy" Sortable="true" />
+        <TemplateColumn Title="Edit booking" Context="package">
+            <button @onclick="()=>OnEdit(package)">Edit</button>
+        </TemplateColumn>
+    </QuickGrid>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    // The app crashes if the DB connection fails - this must be resolved!
+    // This issue is resolved now using a try-catch as well as an instantiation of the list but it should be tested ASAP!
+
+    private List<Package> _packages = [];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var searchPackagesRequest = new SearchPackagesRequest();
+
+                var response = await client.PostAsJsonAsync("/api/package/search", searchPackagesRequest);
+                response.EnsureSuccessStatusCode();
+
+                var packageArray = await response.Content.ReadFromJsonAsync<Package[]>();
+                _packages = packageArray?.ToList() ?? new List<Package>();
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"DB connection failed: {ex}");
+            }
+        }
+    }
+    
+    private void OnEdit(Package package)
+    {
+        // Logic for editing
+    }
+}

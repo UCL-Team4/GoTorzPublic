@@ -1,0 +1,29 @@
+﻿@page "/sales"
+@using GoTorz.View.Layout
+@using GoTorz.View.Components.Sales
+@using GoTorz.View.Components.ManagePackages
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin, Sales")]
+@rendermode InteractiveServer
+
+<PageTitle>Sales Dashboard</PageTitle>
+
+<div class="admin-dashboard d-flex text-white bg-dark" style="min-height: 100vh;">
+    <Sidebar />
+
+    <main class="main-content p-4 w-100 bg-dark text-white">
+		<h3>Dashboard</h3>
+
+		<div>
+			<PendingInquiries />
+		</div>
+
+		<div>
+			<RecentPurchases />
+		</div>
+    </main>
+</div>
+
+@code {
+
+}

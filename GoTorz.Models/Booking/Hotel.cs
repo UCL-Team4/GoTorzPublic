@@ -1,4 +1,4 @@
-﻿namespace GoTorz.Models.API;
+﻿namespace GoTorz.Models.Booking;
 
 public class Hotel
 {

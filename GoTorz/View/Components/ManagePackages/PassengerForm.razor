@@ -1,0 +1,134 @@
+﻿@*Darkmode should be implemented differently, to avoid white borders*@
+<div class="container-fluid">
+    <div class="bg-dark text-white p-4 rounded">
+
+        <!-- Booking search -->
+        <div class="mb-4">
+            <label for="bookingNumber" class="form-label fw-bold">Booking number</label>
+            <input type="text" id="bookingNumber" class="form-control bg-secondary text-white border-0" placeholder="Booking number">
+        </div>
+
+        <!-- Passenger details -->
+        <h5 class="fw-bold mb-3">🧍 Passenger details</h5>
+        <p class="mb-3 text-light">Name as on ID card/passport without title and punctuation</p>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Name</label>
+                <input class="form-control bg- text-white border-0" @bind="Passenger.Name" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Surname</label>
+                <input class="form-control bg-secondary text-white border-0" @bind="Passenger.Surname" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Title</label>
+                <input class="form-control bg-secondary text-white border-0" @bind="Passenger.Title" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Birthday</label>
+                <input type="date" class="form-control bg-secondary text-white border-0" @bind="Passenger.Birthday" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Nationality</label>
+                <select class="form-select bg-secondary text-white border-0" @bind="Passenger.Nationality">
+                    <option value="">Select</option>
+                    <option>Denmark</option>
+                    <option>Germany</option>
+                    <option>USA</option>
+                    <option>Sweden</option>
+                    <option>Norway</option>
+                    <option>UAE</option>
+                    <option>France</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Identity section -->
+        <h5 class="fw-bold mt-5 mb-3">🪪 Identity</h5>
+        <div class="alert alert-light text-dark">
+            <p class="mb-1">Passport valid for at least 6 months from departure date is required for international travel or transit abroad.</p>
+            <p class="mb-1">Make sure that the passenger’s name is exactly as written in the government-issued ID/Passport/Driving License.</p>
+            <p class="mb-0">Avoid any mistake, because some airlines don’t allow name corrections after booking.</p>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Passport number</label>
+                <input class="form-control bg-secondary text-white border-0" @bind="Passenger.PassportNumber" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Country of Issue</label>
+                <input class="form-control bg-secondary text-white border-0" @bind="Passenger.CountryOfIssue" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Passport Expiry Date</label>
+                <input type="date" class="form-control bg-secondary text-white border-0" @bind="Passenger.PassportExpiryDate" />
+            </div>
+        </div>
+
+        <!-- Contact details section -->
+        <h5 class="fw-bold mt-5 mb-3">📞 Contact details</h5>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Name</label>
+                <input class="form-control bg-secondary text-white border-0" @bind="Passenger.Name" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Surname</label>
+                <input class="form-control bg-secondary text-white border-0" @bind="Passenger.Surname" />
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Title</label>
+                <input class="form-control bg-secondary text-white border-0" @bind="Passenger.Title" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Email</label>
+                <input type="email" class="form-control bg-secondary text-white border-0" @bind="Passenger.Email" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Phone number</label>
+                <input type="tel" class="form-control bg-secondary text-white border-0" @bind="Passenger.PhoneNumber" />
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <div class="text-end">
+            <button class="btn btn-primary px-5 py-2" @onclick="Submit">Submit</button>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private PassengerModel Passenger = new();
+
+    private void Submit()
+    {
+        // To do: Save passenger info here and add logic 
+    }
+
+    public class PassengerModel
+    {
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string Title { get; set; }
+        public DateTime? Birthday { get; set; }
+        public string Nationality { get; set; }
+        public string PassportNumber { get; set; }
+        public string CountryOfIssue { get; set; }
+        public DateTime? PassportExpiryDate { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+    }
+}
